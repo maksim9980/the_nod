@@ -1,6 +1,6 @@
 {
   "name": "nod",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Nod: a decision queue for agent-driven development — the pane, /nod and the nod core.",
   "author": { "name": "Nod contributors" },
   "license": "MIT",
@@ -18,8 +18,8 @@
     "diag": {
       "type": "boolean",
       "title": "Click diagnostics",
-      "description": "Clicks and their outcomes as a transcript line and a toast; when off, only the status line and the footer",
-      "default": true
+      "description": "Diagnostic lines in the chat and toasts: the load line, the /nod registration, presses and their outcomes; when off, only the status line and the pane footer",
+      "default": false
     }
   }
 }

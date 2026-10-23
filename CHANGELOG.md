@@ -2,6 +2,20 @@
 
 All notable changes to Nod are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.1.1] - 2026-10-23
+
+### Fixed
+
+- Install instructions use the two documented steps, `claude plugin marketplace add maksim9980/the_nod` and then `claude plugin install nod@nod`. The README, the docs, the `nod doctor` fix for a missing plugin and the launch drafts no longer rely on `claude plugin install --marketplace`, which some Claude Code versions do not offer.
+
+### Changed
+
+- The pane no longer writes diagnostic lines into the chat by default. The load line, the press lines and their toasts appear only when the plugin option `diag` is turned on; the status line and the pane footer stay as before.
+
+### Added
+
+- `.github/workflows/publish.yml` publishes a GitHub release to PyPI with trusted publishing, without API tokens.
+
 ## [0.1.0] - 2026-10-22
 
 First release.
@@ -21,4 +35,5 @@ First release.
 - `nod import markdown`, which turns each `##` heading of a Markdown file into a backlog card.
 - `nod migrate`, which moves a project with an old `.sprintboot/` state folder over to `.nod/`. `/nod migrate` runs it from Claude Code.
 
+[0.1.1]: https://github.com/maksim9980/the_nod/releases/tag/v0.1.1
 [0.1.0]: https://github.com/maksim9980/the_nod/releases/tag/v0.1.0

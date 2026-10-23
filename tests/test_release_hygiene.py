@@ -20,7 +20,7 @@ from the_nod import __version__
 from the_nod.mcp import server
 
 ROOT = Path(__file__).resolve().parent.parent
-VERSION = "0.1.0"
+VERSION = __import__("the_nod").__version__
 
 # An exemption is a rule: the lines of a file (0-based indexes) that may keep what the check looks for.
 Rule = Callable[[list[str]], set[int]]
