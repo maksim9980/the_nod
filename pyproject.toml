@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "the-nod"
+dynamic = ["version"]
+description = "A decision queue for agent-driven development: agents move the project, you only decide."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.13"
+authors = [{ name = "Nod contributors" }]
+keywords = ["claude-code", "agents", "workflow", "decisions"]
+classifiers = [
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: OS Independent",
+  "Environment :: Console",
+  "Topic :: Software Development",
+]
+
+[project.urls]
+Homepage = "https://github.com/maksim9980/the_nod"
+Issues = "https://github.com/maksim9980/the_nod/issues"
+
+[project.scripts]
+nod = "the_nod.cli:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "the_nod.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["the_nod*"]
+
+[tool.setuptools.package-data]
+the_nod = ["prompts/**/*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

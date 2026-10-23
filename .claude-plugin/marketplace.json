@@ -1,0 +1,12 @@
+{
+  "name": "nod",
+  "description": "Nod — a decision queue and a core for agent-driven development",
+  "owner": { "name": "Nod contributors" },
+  "plugins": [
+    {
+      "name": "nod",
+      "source": "./",
+      "description": "Nod: a decision queue for agent-driven development — the pane, /nod and the nod core."
+    }
+  ]
+}

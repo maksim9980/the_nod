@@ -1,0 +1,1 @@
+{ "modules": ["../mod/nod-pane/hooks/register.tsx"] }

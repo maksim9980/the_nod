@@ -1,0 +1,25 @@
+{
+  "name": "nod",
+  "version": "0.1.0",
+  "description": "Nod: a decision queue for agent-driven development — the pane, /nod and the nod core.",
+  "author": { "name": "Nod contributors" },
+  "license": "MIT",
+  "types": "./mod/nod-pane/types/index.d.ts",
+  "mcpServers": {
+    "nod": { "command": "python", "args": ["-P", "${CLAUDE_PLUGIN_ROOT}/the_nod/__main__.py", "mcp"] }
+  },
+  "userConfig": {
+    "core": {
+      "type": "string",
+      "title": "Core command",
+      "description": "Command that runs the nod core; empty — the plugin's own core",
+      "default": ""
+    },
+    "diag": {
+      "type": "boolean",
+      "title": "Click diagnostics",
+      "description": "Clicks and their outcomes as a transcript line and a toast; when off, only the status line and the footer",
+      "default": true
+    }
+  }
+}

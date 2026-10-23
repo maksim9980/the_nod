@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.venv/
+/.claude-plugin/types/
+mod/nod-pane/.claude-plugin/
+.nod/state.json
+.nod/seen.toml
+.nod/driver.log
+.nod/driver.log.1
+.nod/driver/
