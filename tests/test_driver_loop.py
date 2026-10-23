@@ -1,4 +1,5 @@
 """The driver loop: a pass at once, then on a state change, after work and by the timer."""
+import os
 import time
 from the_nod.cli import main
 from the_nod.driver import loop
@@ -18,8 +19,10 @@ def test_loop_runs_pass_only_on_change(repo, capsys, monkeypatch, tmp_path):
     monkeypatch.setattr(loop.once, "run_pass", lambda args, log: calls.append(1) or loop.once.PassResult("idle", ""))
     import threading
     t = threading.Thread(target=lambda: driver_run(repo, "--interval", "0.1", "--passes", "2", capsys=capsys), daemon=True); t.start()
-    time.sleep(0.5); assert calls == [1]
-    main(["--root", str(repo), "card", "add", "Weekly email digest"]); t.join(5)
+    try:
+        time.sleep(0.5); assert calls == [1]
+    finally:  # a second pass ends the loop, so a failed check above still asks the thread to stop
+        main(["--root", str(repo), "card", "add", "Weekly email digest"]); t.join(5)
     assert not t.is_alive() and calls == [1, 1]
 
 def test_loop_stops_on_keyboard_interrupt(repo, capsys, monkeypatch, tmp_path):
@@ -34,23 +37,31 @@ def test_loop_error_pass_is_quiet_until_state_changes(repo, capsys, monkeypatch,
     import argparse, threading
     env_for_tests(monkeypatch, tmp_path); s = setup(repo, capsys)
     monkeypatch.setattr(loop, "PULL_EVERY_SECONDS", 3600.0)
-    calls = []
+    calls, stop = [], threading.Event()
     def broken(args, log):
         calls.append(1)
-        if len(calls) > 3: raise KeyboardInterrupt
+        if len(calls) > 3 or stop.is_set(): raise KeyboardInterrupt  # stop: the way out when a check failed early
         raise RuntimeError("broken file")
+    def touch(name):
+        # A plain write_text can be polled between creating the file and writing it: two changes, two passes.
+        # os.replace keeps the temp file's mtime, so the loop sees one complete file with one mtime.
+        # The temp file lies outside the watched folders, on the same file system as the repo.
+        new = tmp_path / f"{name}.new"
+        new.write_text("x", encoding="utf-8")
+        os.replace(new, s.root / "cards" / name)
     monkeypatch.setattr(loop.once, "run_pass", broken)
     t = threading.Thread(target=lambda: loop.run_loop(argparse.Namespace(root=str(repo)), interval=0.05, passes=0), daemon=True)
     t.start()
-    time.sleep(0.5); assert len(calls) == 1
-    for n in (2, 3):
-        (s.root / "cards" / f"touch-{n}.md").write_text("x", encoding="utf-8")
-        deadline = time.monotonic() + 3
-        while len(calls) < n and time.monotonic() < deadline: time.sleep(0.05)
-        assert len(calls) == n
-        time.sleep(0.3); assert len(calls) == n
-    (s.root / "cards" / "touch-4.md").write_text("x", encoding="utf-8")
-    t.join(5)
+    try:
+        time.sleep(0.5); assert len(calls) == 1
+        for n in (2, 3):
+            touch(f"touch-{n}.md")
+            deadline = time.monotonic() + 3
+            while len(calls) < n and time.monotonic() < deadline: time.sleep(0.05)
+            assert len(calls) == n
+            time.sleep(0.3); assert len(calls) == n
+    finally:  # the next pass stops the loop, so a failed check above still asks the thread to stop
+        stop.set(); touch("touch-4.md"); t.join(5)
     assert not t.is_alive() and len(calls) == 4
 
 
@@ -78,9 +89,11 @@ def test_loop_exits_2_when_driver_host_changes_to_another_machine(repo, capsys, 
         try: codes.append(loop.run_loop(argparse.Namespace(root=str(repo)), interval=0.05, passes=0))
         except Exception as err: codes.append(err)
     t = threading.Thread(target=go, daemon=True); t.start()
-    time.sleep(0.5); assert t.is_alive()
-    foreign_host(s)
-    t.join(5)
+    try:
+        time.sleep(0.5); assert t.is_alive()
+    finally:  # the foreign host ends the loop even when the check above fails
+        foreign_host(s)
+        t.join(5)
     assert not t.is_alive() and len(codes) == 1 and "runs on desktop" in str(codes[0])
 
 def test_loop_foreign_driver_host_error_follows_the_language(repo, capsys, monkeypatch, tmp_path):
