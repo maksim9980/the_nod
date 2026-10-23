@@ -1,6 +1,7 @@
 // Three channels of a press: status, transcript and toast are set synchronously before any await; outcomes go to
-// the status and the transcript, the toast only for an error and a skip. `diag: false` silences transcript and toast.
+// the status and the transcript, the toast only for an error and a skip. Transcript and toast speak only with `diag` on (off by default).
 import { test, expect } from 'claude-code/testing'
+import { setDiag } from '../hooks/report'
 import { local } from '../hooks/local'
 import { makeActions } from '../hooks/actions'
 import type { Cell, PaneState } from '../hooks/state'
@@ -19,7 +20,7 @@ type StateEvent = { key: string }
 type Next = (e: StateEvent) => Promise<{ value?: { value?: unknown; version?: number } }>
 
 for (const surface of ['desktop', 'terminal'] as const) {
-  test(`(c) a press — status, transcript and toast "pressed …"; the outcome — status and transcript on ${surface}`, async ($, on) => {
+  test(`(c) a press — status, transcript and toast "pressed …"; the outcome — status and transcript on ${surface}`, { options: { diag: true } }, async ($, on) => {
     const calls = seat(on, world())
     await startSession(calls, $)
     const ui = await mountPane($, surface)
@@ -36,7 +37,7 @@ for (const surface of ['desktop', 'terminal'] as const) {
     expect(calls.toasts.filter(l => l.includes('saved'))).toEqual([])
   })
 
-  test(`(c) a refused write — toast and transcript "not saved" on ${surface}`, async ($, on) => {
+  test(`(c) a refused write — toast and transcript "not saved" on ${surface}`, { options: { diag: true } }, async ($, on) => {
     const calls = seat(on, world({ run: argv => (argv.includes('decision') ? { deny: 'denied' } : {}) }))
     await startSession(calls, $)
     const ui = await mountPane($, surface)
@@ -46,7 +47,7 @@ for (const surface of ['desktop', 'terminal'] as const) {
     expect(calls.toasts.filter(l => l.startsWith('Nod: not saved d-fork — '))).toHaveLength(1)
   })
 
-  test(`(b) a foreign instance of another root after the start: the pane draws with the double-load line, a click writes on ${surface}`, async ($, on) => {
+  test(`(b) a foreign instance of another root after the start: the pane draws with the double-load line, a click writes on ${surface}`, { options: { diag: true } }, async ($, on) => {
     let foreign = false
     on('state.get', (async (_: unknown, e: StateEvent, next: Next) => {
       const real = await next(e)
@@ -136,6 +137,7 @@ function expectIgnored(journal: string[], reason: string | RegExp): void {
 }
 
 test('(e0) three channels synchronously, before the first await: status, transcript, toast', async () => {
+  setDiag(true)  // the transcript and the toast are off by default
   const journal: string[] = []
   makeActions(fakeEngine(journal) as never, fakeState()).answer('d-fork', 'A')
   expect(journal.slice(0, 3).map(x => x.split(' ')[0])).toEqual(['status', 'log', 'toast'])
@@ -145,6 +147,7 @@ test('(e0) three channels synchronously, before the first await: status, transcr
 })
 
 test('(d) busy held: "ignored — saving d-fork since HH:MM:SS" in all channels', async () => {
+  setDiag(true)  // the transcript and the toast are off by default
   const journal: string[] = []
   let free: () => void = () => undefined
   const hold = { wait: new Promise<void>(resolve => { free = resolve }) }
@@ -159,6 +162,7 @@ test('(d) busy held: "ignored — saving d-fork since HH:MM:SS" in all channels'
 })
 
 test('(d) nod not found: a skip with the reason, nod is not called', async () => {
+  setDiag(true)  // the transcript and the toast are off by default
   const journal: string[] = []
   makeActions(fakeEngine(journal) as never, fakeState({ nodPrefix: null })).answer('d-fork', 'A')
   await tick()
@@ -168,6 +172,7 @@ test('(d) nod not found: a skip with the reason, nod is not called', async () =>
 })
 
 test('(d) a stale snapshot: a skip for one answer and for "all"', async () => {
+  setDiag(true)  // the transcript and the toast are off by default
   const journal: string[] = []
   const a = makeActions(fakeEngine(journal) as never, fakeState({ snapshot: { ...STATE_FULL, fresh: false } }))
   a.answer('d-fork', 'A')

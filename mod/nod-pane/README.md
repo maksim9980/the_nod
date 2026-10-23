@@ -95,9 +95,9 @@ The "Apply the suggestions" prompt asks the agent to open `reviews/<week>.md`, t
 
 The "Goes to the chat" footer shows the draft. "Send" queues it through `prompt.submit`, "Clear" wipes it.
 
-Every press goes to three places at once: the status line under the prompt `Nod: pressed “…”…`, a grey line in the chat `Nod: pressed “…” · HH:MM:SS` and a toast. Then the status shows `saving <id>…` and the outcome `saved <id> · N ms` (cleared after 5 s) or `not saved <id> — reason`; the outcome repeats as a chat line, an error and a skip also as a toast. The pane footer keeps the line `last action: …` with the outcome: ok, error or `ignored: reason`.
+Every press goes to the status line under the prompt `Nod: pressed “…”…`; with `diag` on (off by default, see below) also to a grey line in the chat `Nod: pressed “…” · HH:MM:SS` and a toast. Then the status shows `saving <id>…` and the outcome `saved <id> · N ms` (cleared after 5 s) or `not saved <id> — reason`; with `diag` on the outcome repeats as a chat line, an error and a skip also as a toast. The pane footer keeps the line `last action: …` with the outcome: ok, error or `ignored: reason`.
 
-The pane header ends in `· drawn HH:MM:SS · #N`: the time and the number of the drawing by this mod instance. At session start the chat gets the line `Nod: mod loaded from <folder> · instance <id> · state reset`: the mod resets its `$.state` keys of earlier loads, except the draft.
+The pane header ends in `· drawn HH:MM:SS · #N`: the time and the number of the drawing by this mod instance. At session start, with `diag` on, the chat gets the line `Nod: mod loaded from <folder> · instance <id> · state reset`: the mod resets its `$.state` keys of earlier loads, except the draft.
 
 While a write runs, the card's buttons are hidden and the line "saving…" shows. An error is written next to it: `not saved: …` and the "Retry" button. The snapshot is reread every 15 seconds and after a tool call.
 
@@ -165,24 +165,24 @@ The first click on the pane gives it focus, the second click acts. When the pane
 
 The `/nod` answer is the diagnostics in one answer: the instance and the plugin root, whether `/nod` is in the engine registry, the pane owner (this instance or another one with its token), `pending`, the last press, the last action, the number of drawings and the time of the last one. It comes even when `$.state` does not answer: the reads are bounded by 2 s.
 
-If the button has the focus and the press is silent, look at the three channels: the status under the prompt, the grey line in the chat, the toast.
+If the button has the focus and the press is silent, look at the status under the prompt; turn on `diag` to get the grey line in the chat and the toast as well.
 
 - **Nothing at all** — the press did not reach the mod. Type `/nod` and compare the `#N` number in the pane header before and after: if the number did not grow, the surface shows an old frame with dead buttons; close the pane and open it again with `/nod`. If the number grew and the press is silent again, the handler is not called; attach the `/nod` answer.
 - **"pressed", but no "saving…"** — the mod got the press, but the write did not start. The status and the footer name the reason (`ignored — saving d-xxxx since HH:MM:SS`, "nod not found", "snapshot not fresh", `pane state does not respond (…)`). If the status is not visible, type `/nod`: the lines `pending:`, `last press:`, `last action:`.
 - **`pane state does not respond (…) — going on`** — `$.state` is not written or hangs in this session. The answer is written anyway: "saving…", the write error and the footer live in the module itself, not in `$.state`.
 
-To turn off the chat lines and the toasts: `/config` → `nod.diag` → off. The status under the prompt and the pane footer stay.
+The chat lines and the toasts are off by default. To turn them on: `/config` → `nod.diag` → on. The status under the prompt and the pane footer are always there.
 
 ## If there is no /nod command
 
 Even without `/nod` the pane opens by itself after the first message of the session. `/nod` is needed only if the pane was closed.
 
-Look at the load line in the chat: `Nod: mod loaded from … · /nod registered, in the engine registry: yes/no`. With `diag` off the mod does not write this line. To see the fact, turn on `/config` → `nod.diag`.
+Look at the load line in the chat: `Nod: mod loaded from … · /nod registered, in the engine registry: yes/no`. The mod writes this line only with `diag` on (off by default): turn on `/config` → `nod.diag` to see the fact.
 
 - **"in the engine registry: yes"** — the engine knows the command, the Desktop command list is out of date. Start a new message. If that does not help, reload the session.
-- **"in the engine registry: no — <reason>"** — the line names the reason: a registration error, "the command is not in the list" or "the command list did not answer". The mod repeats the registration right after the session start and once more after the first answer. Each retry with a new outcome writes the line `Nod: registration retry … — …`. No line means the outcome did not change.
+- **"in the engine registry: no — <reason>"** — the line names the reason: a registration error, "the command is not in the list" or "the command list did not answer". The mod repeats the registration right after the session start and once more after the first answer. With `diag` on, each retry with a new outcome writes the line `Nod: registration retry … — …`. No line means the outcome did not change.
 
-If the chat says "yes" and there is still no `/nod`, report it and attach the load line.
+If the load line says "yes" and there is still no `/nod`, report it and attach the load line.
 
 ## If a button answers slowly
 

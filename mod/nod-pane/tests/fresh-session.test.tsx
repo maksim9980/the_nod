@@ -20,7 +20,7 @@ const runNodCommand = ($: Engine) => $.command.run({
   command: 'nod', args: '', origin: { kind: 'composer' }, presentation: { isFullscreen: true, columns: 120 },
 } as never) as Promise<{ text?: string }>
 
-test('(a) a fresh session: /nod in the registry from the first session.start, the load line "yes", /nod answers, the pane is open', async ($, on) => {
+test('(a) a fresh session: /nod in the registry from the first session.start, the load line "yes", /nod answers, the pane is open', { options: { diag: true } }, async ($, on) => {
   const calls = seat(on, world())
   await startSession(calls, $)
   expect(calls.registers).toEqual(['nod'])
@@ -40,7 +40,16 @@ test('(a) a fresh session: /nod in the registry from the first session.start, th
   expect(registryLines(calls)).toHaveLength(1)
 })
 
-test('(b) the first registration refused — "no — <error>" in the load line, the retry after next(e) — "yes"', async ($, on) => {
+test('diagnostics off by default: no load line in the transcript, /nod still answers with the facts', async ($, on) => {
+  const calls = seat(on, world())
+  await startSession(calls, $)
+  expect(loaded(calls)).toHaveLength(0)
+  expect(registryLines(calls)).toHaveLength(0)
+  const ran = await runNodCommand($)
+  expect(ran.text).toContain(YES)
+})
+
+test('(b) the first registration refused — "no — <error>" in the load line, the retry after next(e) — "yes"', { options: { diag: true } }, async ($, on) => {
   const calls = seat(on, world({ registerDeny: 'the registry is not ready', registerDenyTimes: 1 }))
   await startSession(calls, $)
   expect(calls.registers).toEqual(['nod', 'nod'])
@@ -55,7 +64,7 @@ test('(b) the first registration refused — "no — <error>" in the load line, 
   expect(calls.registers).toHaveLength(2)
 })
 
-test('(c) the registration resolved but the list lacks it — "no — the command is not in the list", the retry on the first turn.complete — "yes"', async ($, on) => {
+test('(c) the registration resolved but the list lacks it — "no — the command is not in the list", the retry on the first turn.complete — "yes"', { options: { diag: true } }, async ($, on) => {
   // A list without /nod twice: on the attempt in session.start and on the retry after next(e).
   const calls = seat(on, world({ listHide: 2 }))
   await startSession(calls, $)
@@ -75,7 +84,7 @@ test('(c) the registration resolved but the list lacks it — "no — the comman
   expect(registryLines(calls)).toHaveLength(2)
 })
 
-test('(c) the command list stays empty after turn.complete — one "no" line, /nod names "no"', async ($, on) => {
+test('(c) the command list stays empty after turn.complete — one "no" line, /nod names "no"', { options: { diag: true } }, async ($, on) => {
   const calls = seat(on, world({ listHide: 99 }))
   await startSession(calls, $)
   await turnDone($)
@@ -86,14 +95,14 @@ test('(c) the command list stays empty after turn.complete — one "no" line, /n
   expect(ran.text).toContain('/nod registered, in the engine registry: no — the command is not in the list')
 })
 
-test('a malformed command.list answer (not an array) — "no — the command list did not answer", the pane opens anyway', async ($, on) => {
+test('a malformed command.list answer (not an array) — "no — the command list did not answer", the pane opens anyway', { options: { diag: true } }, async ($, on) => {
   const calls = seat(on, world({ listNull: true }))
   await startSession(calls, $)
   expect(loaded(calls)[0]).toMatch(/ · \/nod registered, in the engine registry: no — the command list did not answer/)
   expect(calls.opens.map(o => o.id)).toEqual(['nod'])
 })
 
-test('command.register hangs — the start and the pane wait no longer than 2 s, the fact "no — registration did not answer in 2 s"', async ($, on) => {
+test('command.register hangs — the start and the pane wait no longer than 2 s, the fact "no — registration did not answer in 2 s"', { options: { diag: true } }, async ($, on) => {
   const calls = seat(on, world({ registerHangTimes: 2 }))
   const started = $.session.start({ cwd: ROOT, surface: 'desktop', isInteractive: true } as never)
   await calls.clock.advance(2000)

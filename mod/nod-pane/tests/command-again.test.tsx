@@ -24,7 +24,7 @@ test('(d) drawing and tool.call do not call command.register; /nod works', async
   expect(ran.text).toContain('Nod: pane opened')
 })
 
-test('(d) command.register always refused — the reason in the load line, no second line with the same reason', async ($, on) => {
+test('(d) command.register always refused — the reason in the load line, no second line with the same reason', { options: { diag: true } }, async ($, on) => {
   const calls = seat(on, { files: { [STATE]: JSON.stringify(STATE_FULL) }, mtime: 1, registerDeny: 'forbidden' })
   await startSession(calls, $)
   expect(calls.registers).toEqual(['nod', 'nod'])

@@ -276,7 +276,7 @@ async function answerNoState($: EngineInterface, diag: string): Promise<string> 
 }
 
 export const register: Register = (on, options) => {
-  setDiag(options.diag !== false)
+  setDiag(options.diag === true)
   // The focus ring came to the pane: the status "the pane has focus…"; the ring goes on (focus.ts).
   on('ui.focus', { component: 'Pane', requestId: PANE }, ($, e, next) => onPaneFocus($, e, next))
   on('session.start', async ($, e, next) => {

@@ -15,7 +15,8 @@ def test_manifest_names_and_versions_agree():
     market = json.loads((ROOT / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
     pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     assert plugin["name"] == "nod" == market["plugins"][0]["name"] and market["plugins"][0]["source"] == "./"
-    assert plugin["version"] == server.SERVER_INFO["version"] == __version__ == "0.1.0"
+    assert plugin["version"] == server.SERVER_INFO["version"] == __version__
+    assert plugin["userConfig"]["diag"]["default"] is False  # the pane stays quiet in the chat unless turned on
     assert pyproject["project"]["dynamic"] == ["version"]
     assert pyproject["tool"]["setuptools"]["dynamic"]["version"] == {"attr": "the_nod.__version__"}
     assert "version" not in market["plugins"][0]

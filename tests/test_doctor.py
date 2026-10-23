@@ -232,7 +232,7 @@ def test_doctor_table_both_languages(repo, capsys, tmp_path, monkeypatch):
     assert russian.splitlines()[0].split() == ["нужно", "есть", "чем", "лечится"]
     assert re.search(r"плагин nod\s+нет \(не установлен\)", russian) and re.search(r"задача драйвера\s+нет \(задача .* не найдена\)", russian)
     assert re.search(r"claude\s+нет \(не в PATH\)", russian)
-    assert "python ≥ 3.13" in russian and "claude plugin install nod --marketplace" in russian
+    assert "python ≥ 3.13" in russian and "claude plugin marketplace add" in russian and "; claude plugin install nod@nod" in russian
 
 
 def test_english_doctor_check_ignores_a_cyrillic_checkout(repo, capsys, tmp_path, monkeypatch):
@@ -347,7 +347,7 @@ def test_doctor_plugin_not_installed(repo, capsys, tmp_path, monkeypatch):
     code, out = doctor_json(repo, capsys)
     p = by_name(out, "nod plugin")
     assert code == 1 and p["ok"] is False and p["detail"] == "not installed" and p["auto"] is None
-    assert p["fix"] == f"claude plugin install nod --marketplace {doctor.plugin_root()}"
+    assert p["fix"] == f"claude plugin marketplace add {doctor.plugin_root()}; claude plugin install nod@nod"
 
 
 def test_doctor_plugin_not_installed_without_root(repo, capsys, tmp_path, monkeypatch):
@@ -355,7 +355,7 @@ def test_doctor_plugin_not_installed_without_root(repo, capsys, tmp_path, monkey
     monkeypatch.setattr(doctor, "machine", lambda: fake_machine(tmp_path))
     init(repo, capsys)
     _, out = doctor_json(repo, capsys)
-    assert by_name(out, "nod plugin")["fix"] == "claude plugin install nod --marketplace <Nod folder or repo>"
+    assert by_name(out, "nod plugin")["fix"] == "claude plugin marketplace add <Nod folder or repo>; claude plugin install nod@nod"
 
 
 def test_doctor_plugin_installed_any_version(repo, capsys, tmp_path, monkeypatch):

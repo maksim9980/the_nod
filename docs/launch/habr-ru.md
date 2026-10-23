@@ -103,7 +103,8 @@ Nod пишет состояние только в рабочей ветке, `ma
 Нужны Claude Code, git и Python 3.13 или новее в PATH под именем `python`.
 
 ```
-claude plugin install nod --marketplace maksim9980/the_nod
+claude plugin marketplace add maksim9980/the_nod
+claude plugin install nod@nod
 ```
 
 В Claude Desktop, на вкладке Code, `/plugin` не работает. Там нажмите «+» рядом с полем ввода, откройте Plugins, добавьте маркетплейс `maksim9980/the_nod`, потом плагин `nod`, и перезапустите Desktop.

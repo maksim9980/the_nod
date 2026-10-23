@@ -34,7 +34,8 @@ https://github.com/maksim9980/the_nod/blob/main/docs/bugs/2026-10-21-pane-first-
 
 ## 7
 
-Claude Code only. Checked on Windows 11. Linux, live under WSL: core tests on Python 3.12 (Nod needs 3.13), autostart installed and removed; start at login or reboot not tested. macOS: tests only.
+Claude Code only. Checked on Windows 11. Linux, live under WSL: core tests (Python 3.12, Nod needs 3.13) and autostart install; start at login not tested. macOS: tests only.
 
 Install:
-claude plugin install nod --marketplace maksim9980/the_nod
+claude plugin marketplace add maksim9980/the_nod
+claude plugin install nod@nod

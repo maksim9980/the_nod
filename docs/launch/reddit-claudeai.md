@@ -21,7 +21,7 @@ Everything lives as files in `.nod/`, committed to git on a work branch. Nod tal
 
 How to try:
 
-1. `claude plugin install nod --marketplace maksim9980/the_nod`. In Claude Desktop, click "+" next to the prompt, open Plugins, add the marketplace `maksim9980/the_nod`, then the `nod` plugin, and restart Desktop.
+1. `claude plugin marketplace add maksim9980/the_nod`, then `claude plugin install nod@nod`. In Claude Desktop, click "+" next to the prompt, open Plugins, add the marketplace `maksim9980/the_nod`, then the `nod` plugin, and restart Desktop.
 2. In a repo, make a work branch with `git switch -c nod-work`, then type `/nod init` in a session. It creates `.nod/` and opens the pane. It also edits `.gitignore` without committing it, so commit that yourself.
 3. `nod card add "<title>" --body "<what you want>"`
 4. Run `nod driver once`, pass after pass, and answer whatever shows up under "Waiting for you".

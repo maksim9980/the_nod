@@ -29,7 +29,7 @@ With the package installed, `command = "nod"` and `args = ["--root", "<project f
 
 ## Protocol
 
-JSON-RPC 2.0, one message per line. Protocol versions: `2025-06-18`, `2025-03-26`, `2024-11-05`. The server calls itself `nod`, version `0.1.0`, and answers `initialize`, `ping`, `tools/list` and `tools/call`. Notifications get no answer.
+JSON-RPC 2.0, one message per line. Protocol versions: `2025-06-18`, `2025-03-26`, `2024-11-05`. The server calls itself `nod`, with the version of the package, and answers `initialize`, `ping`, `tools/list` and `tools/call`. Notifications get no answer.
 
 The state root is `--root`, or the repository of the current folder. If the server finds the state at start, it keeps that root. If not, it still starts and answers `tools/list`, and a tool call returns `isError` with `no state: run nod init`; the core then looks for the state again on every call. An explicit `--root` that leads to no state is refused with exit code 2.
 

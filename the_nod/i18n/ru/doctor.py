@@ -39,6 +39,7 @@ MESSAGES = {
     "doctor.plugin_version": "{version} из {marketplace}",
     "doctor.plugin_via_dirs": "через {key}",
     "doctor.plugin_missing": "не установлен",
+    "doctor.plugin_install_fix": "claude plugin marketplace add {where}; claude plugin install {plugin}",
     "doctor.plugin_unknown_root": "<папка или репа Nod>",
 
     # the MCP server of the plugin on macOS and Linux

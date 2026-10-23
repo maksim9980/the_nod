@@ -43,7 +43,7 @@ function staleStore(on: Parameters<Parameters<typeof test>[1]>[1]) {
 const rootOfToken = (token: unknown): string => String(token).slice(String(token).indexOf('@') + 1)
 
 for (const surface of ['desktop', 'terminal'] as const) {
-  test(`(a) old keys of a previous load: session.start resets them, draft stays, a click writes on ${surface}`, async ($, on) => {
+  test(`(a) old keys of a previous load: session.start resets them, draft stays, a click writes on ${surface}`, { options: { diag: true } }, async ($, on) => {
     const store = staleStore(on)
     const calls = seat(on, world())
     await startSession(calls, $)
@@ -78,7 +78,7 @@ for (const surface of ['desktop', 'terminal'] as const) {
   })
 }
 
-test('the reset failed for a key — a transcript line names the key, the start goes on', async ($, on) => {
+test('the reset failed for a key — a transcript line names the key, the start goes on', { options: { diag: true } }, async ($, on) => {
   let deny = false
   on('state.set', (async (_: unknown, e: StateEvent, next: Next) =>
     (deny && e.key === 'freeFor' ? { deny: 'forbidden' } : next(e))) as never)

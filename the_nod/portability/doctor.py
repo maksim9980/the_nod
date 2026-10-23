@@ -282,7 +282,7 @@ def _plugin(m: Machine, root: Path | None) -> Check:
     if sources:
         return _check(name, True, t("doctor.plugin_via_dirs", key=PLUGIN_DIRS_KEY), NONE, None)
     where = _quoted(root) if root is not None else t("doctor.plugin_unknown_root")
-    fix = f"claude plugin install {PLUGIN_NAME} --marketplace {where}"
+    fix = t("doctor.plugin_install_fix", where=where, plugin=f"{PLUGIN_NAME}@{PLUGIN_NAME}")
     return _check(name, False, t("doctor.plugin_missing"), fix, None)
 
 

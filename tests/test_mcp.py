@@ -287,7 +287,7 @@ def test_handle_initialize_list_call(monkeypatch):
 
 def test_server_info_version_is_the_package_version():
     info = handle({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}}, "R")["result"]["serverInfo"]
-    assert info == {"name": "nod", "version": __version__} and __version__ == "0.1.0"
+    assert info == {"name": "nod", "version": __version__}
 
 
 def test_handle_call_passes_root_and_uses_stderr_on_failure(monkeypatch):
@@ -398,7 +398,7 @@ def test_mcp_starts_without_state(tmp_path):
     proc = subprocess.run([sys.executable, "-m", "the_nod", "mcp"], input=requests, capture_output=True, cwd=tmp_path, timeout=120,
                           env=child_env())
     answers = [json.loads(l) for l in proc.stdout.decode("utf-8").splitlines() if l.strip()]
-    assert proc.returncode == 0 and answers[0]["result"]["serverInfo"]["version"] == __version__ == "0.1.0"
+    assert proc.returncode == 0 and answers[0]["result"]["serverInfo"]["version"] == __version__
     assert len(answers[1]["result"]["tools"]) == len(TOOLS)
     assert answers[2]["result"]["isError"] is True and "no state: run nod init" in answers[2]["result"]["content"][0]["text"]
 

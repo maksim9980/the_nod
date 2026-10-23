@@ -1,5 +1,7 @@
 # Publishing Nod 0.1.0
 
+Later releases need none of the steps below: raise the version in `the_nod/__init__.py` and `.claude-plugin/plugin.json`, add a section to `CHANGELOG.md`, push, tag and create a GitHub release. The workflow `.github/workflows/publish.yml` uploads the release to PyPI. The steps below record how the first release was published from the internal branch.
+
 These are the steps of the repository owner, in order. Nothing in the repository publishes by itself.
 
 Open a terminal in the repository root, `<path to the_nod>`. Where PowerShell and bash differ, each has its own block; where they do not, one block serves both. Use one terminal window for all the steps. The account name you set in step 1 is used again in steps 3 to 7, and the identity you set in step 2 is used in step 3.
@@ -317,7 +319,8 @@ PowerShell:
 $profileDir = Join-Path ([System.IO.Path]::GetTempPath()) "nod-clean-profile"
 New-Item -ItemType Directory -Force $profileDir | Out-Null
 $env:CLAUDE_CONFIG_DIR = $profileDir
-claude plugin install nod --marketplace "$account/the_nod"
+claude plugin marketplace add "$account/the_nod"
+claude plugin install nod@nod
 claude plugin list
 ```
 
@@ -325,11 +328,12 @@ bash:
 
 ```bash
 export CLAUDE_CONFIG_DIR="$(mktemp -d)"
-claude plugin install nod --marketplace "$account/the_nod"
+claude plugin marketplace add "$account/the_nod"
+claude plugin install nod@nod
 claude plugin list
 ```
 
-The list must show `nod`, enabled, with version `0.1.0`. The install may say that two plugin options are not set yet. They have defaults, so ignore the message. Remove the clean profile.
+The list must show `nod`, enabled, with the version of the release. The install may say that two plugin options are not set yet. They have defaults, so ignore the message. Remove the clean profile.
 
 PowerShell:
 

@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+import the_nod
 from the_nod.paths import NO_WINDOW
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -56,13 +57,16 @@ def run(argv, env, cwd=None) -> subprocess.CompletedProcess:
 def test_install_from_folder_marketplace(tmp_path):
     claude = os.environ["NOD_CLAUDE"]
     env = clean_env(tmp_path)
-    done = run([claude, "plugin", "install", "nod", "--marketplace", str(ROOT), "--json"], env)
+    added = run([claude, "plugin", "marketplace", "add", str(ROOT)], env)
+    show(added.stdout + added.stderr)
+    assert added.returncode == 0
+    done = run([claude, "plugin", "install", "nod@nod", "--json"], env)
     show(done.stdout + done.stderr)
     assert done.returncode == 0 and json.loads(done.stdout.strip().splitlines()[-1])["outcome"] == "ok"
     registry = json.loads(
         (tmp_path / "home" / ".claude" / "plugins" / "installed_plugins.json").read_text(encoding="utf-8")
     )
-    assert registry["plugins"]["nod@nod"][0]["version"] == "0.1.0"
+    assert registry["plugins"]["nod@nod"][0]["version"] == the_nod.__version__
     listing = run([claude, "plugin", "list"], env).stdout
     show(listing)
     assert "nod@nod" in listing and f"Read from: {ROOT}" in listing

@@ -28,7 +28,7 @@ The `nod plugin` row tells five cases apart:
 | the plugin loads through `CLAUDE_CODE_PLUGIN_DIRS` | `via CLAUDE_CODE_PLUGIN_DIRS` | — |
 | installed, and also in `CLAUDE_CODE_PLUGIN_DIRS` | `installed and also in CLAUDE_CODE_PLUGIN_DIRS (…) — double load` | remove the path from `env` in `~/.claude/settings.json` |
 | installed from two marketplaces | `installed twice: a, b — double load` | `claude plugin uninstall nod@<marketplace>` |
-| not installed | `not installed` | `claude plugin install nod --marketplace <plugin folder>` |
+| not installed | `not installed` | `claude plugin marketplace add <plugin folder>; claude plugin install nod@nod` |
 
 `CLAUDE_CODE_PLUGIN_DIRS` is read from `env` in `settings.json` and from the environment of the process. A path counts as this plugin when it, its parent or its grandparent holds `.claude-plugin/plugin.json` with the name `nod`. The table shows the detail only for a failed check; `--json` has it for all of them.
 

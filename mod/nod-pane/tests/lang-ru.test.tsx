@@ -124,7 +124,7 @@ test('/nod answers in the snapshot language', async ($, on) => {
   expect((await nodCommand($, 'nonsense')).text).toBe(RU.subUnknown)
 })
 
-test('texts before the first snapshot: the language of the last snapshot in $.state.nod, otherwise English', async ($, on) => {
+test('texts before the first snapshot: the language of the last snapshot in $.state.nod, otherwise English', { options: { diag: true } }, async ($, on) => {
   const calls = seat(on, world(RU_FULL))
   await startSession(calls, $)
   // The first session of this $.state: no earlier snapshot — the load line is English.

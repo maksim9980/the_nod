@@ -11,10 +11,11 @@ Nod keeps the backlog, your decisions, the agent runs and the acceptance results
 You need Claude Code, git, and Python 3.13 or newer on PATH as `python` (on macOS and Linux see [Limitations](#limitations)). Nod uses only the Python standard library.
 
 ```
-claude plugin install nod --marketplace maksim9980/the_nod
+claude plugin marketplace add maksim9980/the_nod
+claude plugin install nod@nod
 ```
 
-In a Claude Code terminal session the same command is `/plugin install nod --marketplace maksim9980/the_nod`. In Claude Desktop (the Code tab) `/plugin` does not work: click "+" next to the prompt, open Plugins, add the marketplace `maksim9980/the_nod`, then add the `nod` plugin. Restart Desktop afterwards, because a session loads plugins when it starts.
+In a Claude Code terminal session the same two steps are `/plugin marketplace add maksim9980/the_nod` and `/plugin install nod@nod`. The install may say that two plugin options are not set: both have defaults, so there is nothing to set. In Claude Desktop (the Code tab) `/plugin` does not work: click "+" next to the prompt, open Plugins, add the marketplace `maksim9980/the_nod`, then add the `nod` plugin. Restart Desktop afterwards, because a session loads plugins when it starts.
 
 The plugin brings the pane, the `/nod` command, the MCP server `nod` and the core. The core runs as a file from the plugin folder, so neither the pane nor the driver's agents need pip.
 

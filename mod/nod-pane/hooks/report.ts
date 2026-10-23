@@ -1,7 +1,7 @@
 // Self-diagnosis without logs: the status line under the prompt, a transcript line, a toast and the "last action"
 // in the pane footer. Status, transcript and toast are synchronous engine calls that depend neither on $.state
 // nor on a redraw of the pane; lastAction is a module variable (local.ts), the footer draws it when it is not null.
-// `userConfig.diag: false` silences the transcript and the toast; the status and the footer stay.
+// The transcript and the toast speak only with `userConfig.diag: true` (off by default); the status and the footer stay.
 import type { EngineInterface } from 'claude-code'
 
 import { setLocal } from './local'
@@ -32,7 +32,7 @@ let sticky = false
 // Last line shown: /nod gives it without atoms (the pane state may not answer).
 let lastShown: string | null = null
 // Transcript and toast of presses: register sets it from userConfig.diag on every module load.
-let diag = true
+let diag = false
 
 /** Turns the transcript and the toast of presses on or off (the status and the footer stay). */
 export function setDiag(on: boolean): void {

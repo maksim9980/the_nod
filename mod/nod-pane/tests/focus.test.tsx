@@ -1,6 +1,7 @@
 // Pane focus and extra redraws. On desktop the first click on a pane without the keyboard gives it focus, the second
 // one is the press; every redraw may drop the focus.
 import { test, expect } from 'claude-code/testing'
+import { setDiag } from '../hooks/report'
 import { noteFocus, onPaneFocus } from '../hooks/focus'
 import { setLocal } from '../hooks/local'
 import { PANE_PROPS, STATE, STATE_FULL } from './fixtures'
@@ -29,6 +30,7 @@ function fakeEngine(journal: string[], timers: (() => void)[]) {
 const focusEvent = { component: 'Pane', requestId: 'nod', origin: { kind: 'person' } } as const
 
 test('(a) ui.focus from the owner: the status "the pane has focus…" once, next is always called; the status goes out after 3 s', async () => {
+  setDiag(true)  // the transcript and the toast are off by default
   const journal: string[] = []
   const timers: (() => void)[] = []
   const $ = fakeEngine(journal, timers)
@@ -75,7 +77,7 @@ for (const surface of ['desktop', 'terminal'] as const) {
     expect((await ui.find({ key: 'focus-hint' }))?.text).toBe(HINT)
   })
 
-  test(`(a) isFocused false → true in a drawing — one status "the pane has focus…" per change on ${surface}`, async ($, on) => {
+  test(`(a) isFocused false → true in a drawing — one status "the pane has focus…" per change on ${surface}`, { options: { diag: true } }, async ($, on) => {
     const calls = seat(on, world())
     await startSession(calls, $)
     const ui = await mountPane($, surface, { ...PANE_PROPS, isFocused: false })
