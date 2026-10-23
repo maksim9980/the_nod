@@ -245,6 +245,14 @@ Clear the identity variables again, with the commands at the end of step 3.
 
 Open `https://pypi.org/project/the-nod/`. A 404 page means the name `the-nod` is free. If the page exists, stop: the name is taken.
 
+The repository publishes through `.github/workflows/publish.yml` with PyPI trusted publishing, so no API token is needed. Once, add a pending publisher on PyPI (Account settings → Publishing): project name `the-nod`, owner `<account>`, repository `the_nod`, workflow `publish.yml`, environment `pypi`. After that, every published GitHub release uploads its tag; for a tag released earlier, run the workflow by hand:
+
+```
+gh workflow run publish.yml --repo <account>/the_nod -f ref=v0.1.0
+```
+
+The manual upload below is the alternative without the workflow.
+
 The first upload registers the name. For that upload, create an API token on PyPI with the scope "Entire account", because a token for one project can only exist after the project does. Right after the upload, create a token for the project `the-nod` and delete the account token.
 
 PyPI never accepts the same version twice, even after a delete. A mistake in `0.1.0` can only be fixed by `0.1.1`.
